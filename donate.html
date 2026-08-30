@@ -160,8 +160,7 @@ label.error {
                     </nav>
                     <div class="tab-content p-3" id="nav-tabContent">
                             <div class="tab-pane fade active show" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                <form method="post" action="https://www.peopleforanimalsindia.org/ccavenue/ccavRequestHandler.php" id="INR_form">
-                                    <input type="hidden" name="_token" value="8ja9neAo77Q95nf5cMtNeoJbZMdyRPgmspmMjInl">                                <div class="wrapper price_choose_wrap">
+                                <form method="post" action="/api/ccavenue-request" id="INR_form">                                <div class="wrapper price_choose_wrap">
                                     <div class="price_dive">
                                         <input type="radio" name="amount" id="option-1" class="pyment" value="500">
                                         <label for="option-1" class="option option-1">
@@ -200,16 +199,34 @@ label.error {
                                 <div class="input_sec">
                                     <div class="input-group">
                                         <span class="input-group-text" id="basic-addon1">₹ INR</span>
-                                        <input type="hidden" name="merchant_id" class="form-control" value="10880">
                                         <input type="hidden" name="currency" class="form-control" value="INR">
-                                        <input type="hidden" name="donate_submit_INR" class="form-control" value="donate_submit_INR">
-                                        <input type="hidden" name="donate_submit_USD" class="form-control" value="donate_submit_INR">
-                                        <input type="hidden" name="order_id" class="form-control" value="DONATEINR6bdfca61fd33">
-                                        <input type="hidden" name="redirect_url" class="form-control" value="http://www.peopleforanimalsindia.org/ccavenue/ccavResponseHandler.php">
-                                        <input type="hidden" name="cancel_url" class="form-control" value="http://www.peopleforanimalsindia.org/ccavenue/ccavResponseHandler.php">
                                         <input type="number" name="amount" id="cusAmmount" class="form-control" placeholder="Your Amount" required>
                                     </div>
                                     <div class="input-group">
+                                                                            <span class="input-group-text">Name</span>
+                                                                            <input type="text" name="billing_name" class="form-control" placeholder="Your full name" required>
+                                                                        </div>
+                                                                        <div class="input-group">
+                                                                            <span class="input-group-text">Mobile</span>
+                                                                            <input type="tel" name="billing_tel" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+                                                                        </div>
+                                                                        <div class="input-group">
+                                                                            <span class="input-group-text">Email</span>
+                                                                            <input type="email" name="billing_email" class="form-control" placeholder="For your 80G receipt" required>
+                                                                        </div>
+                                                                        <div class="input-group">
+                                                                            <span class="input-group-text">Address</span>
+                                                                            <input type="text" name="billing_address" class="form-control" placeholder="Address">
+                                                                        </div>
+                                                                        <div class="input-group">
+                                                                            <span class="input-group-text">City</span>
+                                                                            <input type="text" name="billing_city" class="form-control" placeholder="City">
+                                                                        </div>
+                                                                        <div class="input-group">
+                                                                            <span class="input-group-text">PIN</span>
+                                                                            <input type="text" name="billing_zip" class="form-control" placeholder="PIN code">
+                                                                        </div>
+                                                                        <div class="input-group">
                                         <span class="input-group-text" id="basic-addon1"><i data-feather="credit-card"></i> PAN</span>
                                         <input type="hidden" name="type" value="Donate By INR">
                                         <input type="text" name="pan" class="form-control" placeholder="PAN No.">
