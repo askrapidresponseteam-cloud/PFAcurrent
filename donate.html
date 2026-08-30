@@ -23,21 +23,7 @@
 
 			gtag('config', 'G-1KPDWK7L7H');
 			</script>
-	 <style>
-/* Donation form layout: one field per row. The site's .input_sec is a flex
-   row, which was fine with two fields and breaks with eight. */
-#INR_form .input_sec{display:block!important}
-#INR_form .input-group{display:flex!important;flex-wrap:nowrap!important;width:100%!important;margin:0 0 12px 0!important}
-#INR_form .input-group-text{min-width:110px;justify-content:flex-start;background:#f3f1fb;border:1px solid #ddd;border-right:0;color:#4a3f8f;font-weight:600}
-#INR_form .input-group .form-control{flex:1 1 auto;width:auto!important;min-width:0}
-#INR_form .form-control:focus{box-shadow:none;border-color:#7b6bd6}
-@media(max-width:575px){
-  #INR_form .input-group{flex-wrap:wrap!important}
-  #INR_form .input-group-text{width:100%;border-right:1px solid #ddd;border-bottom:0}
-  #INR_form .input-group .form-control{width:100%!important;flex:1 1 100%}
-}
-</style>
-</head>
+	 </head>
        
     <body>
 		<header class="header">
@@ -174,7 +160,8 @@ label.error {
                     </nav>
                     <div class="tab-content p-3" id="nav-tabContent">
                             <div class="tab-pane fade active show" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                <form method="post" action="/api/ccavenue-request" id="INR_form">                                <div class="wrapper price_choose_wrap">
+                                <form method="post" action="/api/ccavenue-request" id="INR_form">
+                                                                    <div class="wrapper price_choose_wrap">
                                     <div class="price_dive">
                                         <input type="radio" name="amount" id="option-1" class="pyment" value="500">
                                         <label for="option-1" class="option option-1">
@@ -210,40 +197,22 @@ label.error {
                                         Only in 2500 INR, you can sponsor a dog’s monthly food requirement. 
                                     </p>
                                 </div>
-                                                                <div class="input_sec">
+                                <div class="input_sec">
                                     <div class="input-group">
-                                        <span class="input-group-text">&#8377; INR</span>
-                                        <input type="hidden" name="currency" value="INR">
-                                        <input type="number" name="amount" id="cusAmmount" class="form-control" placeholder="Your amount" min="1" step="1" required>
+                                        <span class="input-group-text" id="basic-addon1">₹ INR</span>
+                                        
+                                        <input type="hidden" name="currency" class="form-control" value="INR">
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        <input type="number" name="amount" id="cusAmmount" class="form-control" placeholder="Your Amount" required>
                                     </div>
                                     <div class="input-group">
-                                        <span class="input-group-text">Name</span>
-                                        <input type="text" name="billing_name" class="form-control" placeholder="Your full name" required>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-text">Mobile</span>
-                                        <input type="tel" name="billing_tel" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" maxlength="10" inputmode="numeric" required>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-text">Email</span>
-                                        <input type="email" name="billing_email" class="form-control" placeholder="For your 80G receipt" required>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-text">Address</span>
-                                        <input type="text" name="billing_address" class="form-control" placeholder="Address">
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-text">City</span>
-                                        <input type="text" name="billing_city" class="form-control" placeholder="City">
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-text">PIN</span>
-                                        <input type="text" name="billing_zip" class="form-control" placeholder="PIN code" pattern="[0-9]{6}" maxlength="6" inputmode="numeric">
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i data-feather="credit-card"></i> PAN</span>
+                                        <span class="input-group-text" id="basic-addon1"><i data-feather="credit-card"></i> PAN</span>
                                         <input type="hidden" name="type" value="Donate By INR">
-                                        <input type="text" name="pan" class="form-control" placeholder="PAN No. (optional)" maxlength="10" style="text-transform:uppercase">
+                                        <input type="text" name="pan" class="form-control" placeholder="PAN No.">
                                     </div>
                                 </div>
                                 <P>
@@ -259,7 +228,7 @@ label.error {
                                 <a href="https://www.paypal.com/paypalme/Peopleforanimals" class="btn donate_sub" target="_blank"> Donate Now</a>
                                  
                             <!--<form method="post" action="http://www.peopleforanimalsindia.org/ccavenue/usd/ccavRequestHandler.php" class="submitForm" id="usdForm">
-                                <input type="hidden" name="_token" value="8ja9neAo77Q95nf5cMtNeoJbZMdyRPgmspmMjInl">                                <div class="wrapper price_choose_wrap">
+                                                                <div class="wrapper price_choose_wrap">
                                     <div class="price_dive">
                                         <input type="radio" name="amount" id="option-8" value="10">
                                         <label for="option-8" class="option option-8">
@@ -647,7 +616,7 @@ label.error {
 
                                 <h6>Send Us Your Cheque / Demand Draft Details</h6>
                                 <form method="post" action="http://www.peopleforanimalsindia.org/donateformStore" class="submitForm">
-                                    <input type="hidden" name="_token" value="8ja9neAo77Q95nf5cMtNeoJbZMdyRPgmspmMjInl">                                    <div class="d-flex mb-3">
+                                                                        <div class="d-flex mb-3">
                                         <input type="hidden" name="type" value="Donate By Cheque/DD">
                                         <div class="form-check">
                                             <label class="form-check-label" for="flexRadioDefault1">

@@ -146,13 +146,16 @@ module.exports = async function handler(request, response) {
     const orderId = makeOrderId();
     const callback = `${baseUrl(request)}/api/ccavenue-response`;
 
+    /* The donate page collects only an amount and an optional PAN, exactly as
+       it always has. CCAvenue's own checkout collects the donor's name, email
+       and billing address, and returns all of it in the callback -- so these
+       are passed through when present and simply omitted when they are not.
+       None of them is mandatory to CCAvenue. */
     const name = clean(body.billing_name, 100);
     const email = clean(body.billing_email, 100);
     const tel = clean(body.billing_tel, 20).replace(/[^\d+]/g, '');
     const pan = clean(body.pan, 12).toUpperCase();
 
-    if (!name) throw new Error('Please enter your name.');
-    if (!tel || tel.replace(/\D/g, '').length < 10) throw new Error('Please enter a valid mobile number.');
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Please enter a valid email address.');
     if (pan && !/^[A-Z]{5}\d{4}[A-Z]$/.test(pan)) throw new Error('That PAN number does not look valid. Leave it blank if unsure.');
 

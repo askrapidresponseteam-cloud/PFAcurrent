@@ -129,14 +129,29 @@ module.exports = async function handler(request, response) {
     const pan = clean(data.merchant_param1, 12);
     const failureMessage = clean(data.failure_message || data.status_message, 200);
 
+    /* CCAvenue collects the donor's details on its own checkout page and
+       returns them here. This is where PFA gets the name, email and address
+       needed to issue an 80G receipt and to file Form 10BD. */
+    const donorName = clean(data.billing_name, 100);
+    const donorEmail = clean(data.billing_email, 100);
+    const donorTel = clean(data.billing_tel, 20);
+    const donorAddress = [data.billing_address, data.billing_city, data.billing_state, data.billing_zip]
+      .map((v) => clean(v, 60)).filter(Boolean).join(', ');
+
     /* No database here, so these logs are PFA's only internal record. Match
        them against the CCAvenue dashboard when reconciling, and export them
        before Vercel's retention window closes. */
-    console.info('PFA donation result', { orderId, status, amount, trackingId, bankRef, pan: pan || 'none' });
+    console.info('PFA donation result', {
+      orderId, status, amount, trackingId, bankRef,
+      pan: pan || 'none',
+      donorName, donorEmail, donorTel, donorAddress
+    });
 
     const rows = [
       ['Reference number', orderId],
       ['Amount', amount ? `INR ${amount}` : ''],
+      ['Donor', donorName],
+      ['Email', donorEmail],
       ['CCAvenue tracking ID', trackingId],
       ['Bank reference', bankRef],
       ['PAN', pan],
