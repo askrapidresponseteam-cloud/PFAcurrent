@@ -170,8 +170,13 @@
                         <a href="https://www.instagram.com/pfa.official/?hl=en"><img src="./img/instagram.svg"></a>
                     </div>
                 </div> -->
-                <form class="ask_form"  method="post" action="http://www.peopleforanimalsindia.org/AskManeka/store" id="addForm">
-                <input type="hidden" name="_token" value="8ja9neAo77Q95nf5cMtNeoJbZMdyRPgmspmMjInl">                    <div class="form-group">
+                <form class="ask_form"  method="post" action="/api/submit-form" id="addForm">
+      <!-- Spam trap. Hidden from people, filled in by bots. Leave it here. -->
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <input type="hidden" name="form_type" value="ask-maneka">                    <div class="form-group">
                         <textarea rows="4" class="form-control h-auto" name="question" placeholder="Type your question here"></textarea>
                     </div>
                   <div class="form-group">

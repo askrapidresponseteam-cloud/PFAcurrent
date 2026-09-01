@@ -174,6 +174,18 @@ module.exports = async function handler(request, response) {
       .toLowerCase().replace(/[\s/]+/g, '-').replace(/[^a-z0-9-]/g, '');
     const purpose = PURPOSES.has(requested) ? requested : 'donate';
 
+    /* Currency was previously hardcoded to INR while the USD donate form sent
+       currency=USD. A donor choosing $50 would have been charged ₹50. Honour
+       what the form asks for, but only from a fixed list — the value goes
+       straight to the payment gateway. */
+    const CURRENCIES = new Set((process.env.ALLOWED_CURRENCIES || 'INR,USD')
+      .split(',').map((c) => c.trim().toUpperCase()).filter(Boolean));
+    const askedCurrency = clean(body.currency, 8).toUpperCase();
+    if (askedCurrency && !CURRENCIES.has(askedCurrency)) {
+      throw new Error('That currency is not accepted. Please donate in INR.');
+    }
+    const currency = askedCurrency || 'INR';
+
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Please enter a valid email address.');
     if (pan && !/^[A-Z]{5}\d{4}[A-Z]$/.test(pan)) throw new Error('That PAN number does not look valid. Leave it blank if unsure.');
 
@@ -182,7 +194,7 @@ module.exports = async function handler(request, response) {
        an open donation form. A minimum amount and a per-IP limit stop it.
        Both fail open: if Firestore is unreachable a real donor still gets
        through, because blocking genuine gifts is the worse failure. */
-    const gate = await rateLimit.check(request, { email, amount: parseFloat(amount) });
+    const gate = await rateLimit.check(request, { email, amount: parseFloat(amount), currency });
     if (!gate.allowed) {
       console.warn('PFA donation blocked', { reason: gate.reason.slice(0, 80), amount });
       if (gate.retryAfterMinutes) {
@@ -197,7 +209,7 @@ module.exports = async function handler(request, response) {
       merchant_id: merchantId,
       order_id: orderId,
       amount,
-      currency: 'INR',
+      currency,
       redirect_url: callback,
       cancel_url: callback,
       language: 'EN',

@@ -233,7 +233,7 @@ label.error {
         <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
       </div>
 
-      <input type="hidden" name="type" value="Donate By INR">
+      <input type="hidden" name="type" value="Donate By USD">
                                                                 <div class="wrapper price_choose_wrap">
                                     <div class="price_dive">
                                         <input type="radio" name="amount" id="option-8" value="10">
@@ -618,7 +618,31 @@ label.error {
                             <div class="col-12 col-lg-6 col-md-6 contant_sec">
 
                                 <h6>Send Us Your Cheque / Demand Draft Details</h6>
-                                <form method="post" action="/api/ccavenue-request" class="submitForm">
+                                <form method="post" action="/api/submit-form" class="submitForm">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label>Your name</label>
+          <input type="text" name="name" class="form-control" required
+                 placeholder="Name as written on the cheque">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Email</label>
+          <input type="email" name="email" class="form-control" required
+                 placeholder="So we can send your receipt">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Phone</label>
+          <input type="tel" name="phone" class="form-control"
+                 placeholder="Optional">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Amount</label>
+          <input type="number" name="amount" min="1" class="form-control"
+                 placeholder="Amount on the cheque">
+        </div>
+      </div>
+
+      <input type="hidden" name="form_type" value="cheque">
       <!-- Spam trap. Hidden from people, filled in by bots. Leave it here. -->
       <div style="position:absolute;left:-9999px" aria-hidden="true">
         <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>

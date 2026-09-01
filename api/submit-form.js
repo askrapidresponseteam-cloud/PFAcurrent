@@ -22,8 +22,10 @@ const FORM_TYPES = {
   csr: 'CSR',
   'feeder-care': 'Feeder care',
   legacy: 'Legacy',
-  'ask-maneka': 'Enquiry',
+  'ask-maneka': 'Ask Maneka Gandhi',
+  foster: 'Foster',
   volunteer: 'Volunteer',
+  cheque: 'Donation (cheque/DD)',
   contact: 'Enquiry',
 };
 
@@ -110,9 +112,12 @@ module.exports = async function handler(request, response) {
 
   const kind = clean(body.form_type, 30).toLowerCase();
   const category = FORM_TYPES[kind];
-  const back = FORM_TYPES[kind] ? `/${kind === 'feeder-care' ? 'feeder-care-assistance'
-    : kind === 'legacy' ? 'leave-a-legacy'
-    : kind === 'ask-maneka' ? 'ask-maneka-gandhi' : kind}.html` : '/index.html';
+  const PAGE_FOR = {
+    'feeder-care': 'feeder-care-assistance',
+    legacy: 'leave-a-legacy',
+    'ask-maneka': 'ask-maneka-gandhi',
+  };
+  const back = FORM_TYPES[kind] ? `/${PAGE_FOR[kind] || kind}.html` : '/index.html';
 
   if (!category) {
     return page(response, 400, 'That form is not recognised',
@@ -158,7 +163,8 @@ module.exports = async function handler(request, response) {
 
   const all = [name, email, phone, message,
     body.address, body.city, body.state, body.country, body.designation,
-    body.cname, body.crnumber, body.category, body.product_id].join(' ');
+    body.cname, body.crnumber, body.category, body.product_id,
+    body.question, body.where_from, body.pin].join(' ');
   if (ATTACK.test(all)) {
     console.warn('PFA form: rejected a submission matching an attack pattern', { kind });
     return page(response, 400, 'That did not go through',
@@ -181,8 +187,12 @@ module.exports = async function handler(request, response) {
     city: clean(body.city || body.billing_city, 80) || null,
     state: clean(body.state || body.billing_state, 80) || null,
     country: clean(body.country || body.billing_country, 80) || null,
-    pincode: clean(body.pincode || body.billing_zip, 12) || null,
+    pincode: clean(body.pincode || body.pin || body.billing_zip, 12) || null,
     pan: clean(body.pan_no || body.pan, 12).toUpperCase() || null,
+    donateBy: clean(body.donate_by, 40) || null,
+    bankName: clean(body.bank_name, 100) || null,
+    bankDetails: clean(body.bank_details, 200) || null,
+    heardFrom: clean(body.where_from || body.from_where, 100) || null,
     status: 'new',
     source: 'website',
     date: now.toISOString(),

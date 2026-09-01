@@ -63,10 +63,15 @@ function clientIp(request) {
   return fwd || String(request.headers['x-real-ip'] || '').trim() || 'unknown';
 }
 
-/** Minimum accepted donation, in whole rupees. */
-function minimumAmount() {
-  const configured = parseInt(process.env.MIN_DONATION_INR || '', 10);
-  return Number.isFinite(configured) && configured > 0 ? configured : 10;
+/* Minimum accepted donation, per currency. A single rupee figure would be
+   wrong for USD: ₹10 is sensible, $10 is not. */
+const DEFAULT_MIN = { INR: 10, USD: 1 };
+
+function minimumAmount(currency) {
+  const cur = String(currency || 'INR').toUpperCase();
+  const configured = parseInt(process.env[`MIN_DONATION_${cur}`] || '', 10);
+  if (Number.isFinite(configured) && configured > 0) return configured;
+  return DEFAULT_MIN[cur] || 1;
 }
 
 /**
@@ -95,14 +100,16 @@ async function overLimit(id, rule) {
 /**
  * @returns {Promise<{allowed: boolean, reason?: string, retryAfterMinutes?: number}>}
  */
-async function check(request, { email, amount } = {}) {
-  const min = minimumAmount();
+async function check(request, { email, amount, currency } = {}) {
+  const cur = String(currency || 'INR').toUpperCase();
+  const min = minimumAmount(cur);
   const value = Number(amount);
+  const symbol = cur === 'INR' ? '₹' : cur + ' ';
 
   if (Number.isFinite(value) && value < min) {
     return {
       allowed: false,
-      reason: `The smallest donation we can accept online is ₹${min}. ` +
+      reason: `The smallest donation we can accept online is ${symbol}${min}. ` +
               `For a smaller amount, please contact People for Animals directly.`,
     };
   }
