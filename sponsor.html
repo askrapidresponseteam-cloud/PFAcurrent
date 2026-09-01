@@ -430,9 +430,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('totalAm').textContent = total.toLocaleString('en-IN');
     document.getElementById('totalValue').value = String(total);
 
-    // Generate order ID only when the donor proceeds.
-    document.getElementById('order_id').value =
-      'SPONSOR-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 
     sponsorModal.show();
   });
