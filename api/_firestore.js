@@ -181,4 +181,54 @@ async function commit(operations, timeoutMs = 8000) {
   }
 }
 
-module.exports = { commit, setDoc, incrementDoc, fieldPath, encode, encodeFields };
+/* ---- reading, needed by the rate limiter ---- */
+
+function decode(v) {
+  if (!v || typeof v !== 'object') return null;
+  if ('nullValue' in v) return null;
+  if ('stringValue' in v) return v.stringValue;
+  if ('booleanValue' in v) return v.booleanValue;
+  if ('integerValue' in v) return Number(v.integerValue);
+  if ('doubleValue' in v) return v.doubleValue;
+  if ('timestampValue' in v) return new Date(v.timestampValue);
+  if ('arrayValue' in v) return (v.arrayValue.values || []).map(decode);
+  if ('mapValue' in v) {
+    const out = {};
+    for (const [k, x] of Object.entries(v.mapValue.fields || {})) out[k] = decode(x);
+    return out;
+  }
+  return null;
+}
+
+/**
+ * Fetch one document. Resolves to the data, or null when it does not exist.
+ * Never throws — returns null on any failure, so a Firestore outage cannot
+ * take the donate page down with it.
+ */
+async function readDoc(collection, id, timeoutMs = 5000) {
+  try {
+    const { token, projectId } = await accessToken();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    let res;
+    try {
+      res = await fetch(
+        `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)` +
+        `/documents/${collection}/${encodeURIComponent(id)}`,
+        { signal: controller.signal, headers: { Authorization: `Bearer ${token}` } }
+      );
+    } finally {
+      clearTimeout(timer);
+    }
+    if (res.status === 404) return null;
+    if (!res.ok) return null;
+    const body = await res.json();
+    const out = {};
+    for (const [k, v] of Object.entries(body.fields || {})) out[k] = decode(v);
+    return out;
+  } catch {
+    return null;
+  }
+}
+
+module.exports = { commit, setDoc, incrementDoc, readDoc, fieldPath, encode, encodeFields, decode };

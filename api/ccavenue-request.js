@@ -15,6 +15,7 @@
  */
 
 const crypto = require('crypto');
+const rateLimit = require('./_rate-limit.js');
 
 const IV = Buffer.from([
   0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
@@ -175,6 +176,20 @@ module.exports = async function handler(request, response) {
 
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Please enter a valid email address.');
     if (pan && !/^[A-Z]{5}\d{4}[A-Z]$/.test(pan)) throw new Error('That PAN number does not look valid. Leave it blank if unsure.');
+
+    /* Card testing check. This form took 37,306 submissions of exactly one
+       rupee across 2024 and 2025 — stolen card numbers being validated against
+       an open donation form. A minimum amount and a per-IP limit stop it.
+       Both fail open: if Firestore is unreachable a real donor still gets
+       through, because blocking genuine gifts is the worse failure. */
+    const gate = await rateLimit.check(request, { email, amount: parseFloat(amount) });
+    if (!gate.allowed) {
+      console.warn('PFA donation blocked', { reason: gate.reason.slice(0, 80), amount });
+      if (gate.retryAfterMinutes) {
+        response.setHeader('Retry-After', String(gate.retryAfterMinutes * 60));
+      }
+      return errorPage(response, 429, gate.reason);
+    }
 
     /* Server owns merchant_id, order_id, amount and the callback URLs.
        Anything the browser sent for those is ignored on purpose. */

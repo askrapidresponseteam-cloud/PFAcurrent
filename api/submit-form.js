@@ -15,6 +15,7 @@
 
 const crypto = require('crypto');
 const { commit, setDoc, incrementDoc, fieldPath } = require('./_firestore.js');
+const rateLimit = require('./_rate-limit.js');
 
 const FORM_TYPES = {
   adopt: 'Adoption',
@@ -146,6 +147,13 @@ module.exports = async function handler(request, response) {
   if (phone && phone.replace(/\D/g, '').length < 10) {
     return page(response, 400, 'That phone number looks short',
       'Please go back and enter a full phone number including area or country code.', back);
+  }
+
+  const gate = await rateLimit.check(request, { email });
+  if (!gate.allowed) {
+    if (gate.retryAfterMinutes) response.setHeader('Retry-After', String(gate.retryAfterMinutes * 60));
+    return page(response, 429, 'Too many attempts',
+      'Please wait a few minutes and send your message again.', back);
   }
 
   const all = [name, email, phone, message,
