@@ -167,8 +167,13 @@
 <!--end_innerBanner-->
 <section class="py-4 py-lg-5 mb-10 join_sec">
     <div class="container">
-        <form method="post" action="http://www.peopleforanimalsindia.org/ccavenue/ccavRequestHandler.php" class="ask_form" id="addForm">
-            <input type="hidden" name="_token" value="8ja9neAo77Q95nf5cMtNeoJbZMdyRPgmspmMjInl">        <div class="row">
+        <form method="post" action="/api/ccavenue-request" class="ask_form" id="addForm">
+      <!-- Spam trap. Hidden from people, filled in by bots. Leave it here. -->
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <div class="row">
             <div class="col-12 col-lg-7 col-md-6 text_sec pe-lg-5 pe-md-4">
                 <p>
                     Animal welfare is not just about animals. It is about us. Our living conditions, our children, our earth. Cruelty to animals has a significant and irreversible impact on human health, economy and environment. Join PFA in this movement and save Mother nature
@@ -246,13 +251,11 @@
                             
                           </div>
                           <div class="col-7 col-lg-8 col-md-8 plr-4 position-relative">
-                            <input type="hidden" name="merchant_id" class="form-control" value="10880">
-                            <input type="hidden" name="currency" class="form-control" value="INR">
-                            <input type="hidden" name="form_submit" class="form-control" value="form_submit">
-                            <input type="hidden" name="order_id" class="form-control" value="JOINNOWaf926a6dad81">
-                            <input type="hidden" name="redirect_url" class="form-control" value="http://www.peopleforanimalsindia.org/ccavenue/ccavResponseHandler.php">
-                            <input type="hidden" name="cancel_url" class="form-control" value="http://www.peopleforanimalsindia.org/ccavenue/ccavResponseHandler.php">
-                            <input type="text" name="billing_name" class="form-control" placeholder="Your Full Name" value="">
+      <input type="hidden" name="currency" class="form-control" value="INR">
+      
+      
+      
+      <input type="text" name="billing_name" class="form-control" placeholder="Your Full Name" value="">
                             
                           </div>
                           </div>

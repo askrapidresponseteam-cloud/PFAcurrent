@@ -180,8 +180,14 @@
             </div>
             <div class="col-12 col-lg-5 col-md-5">
                 <div class="sticky-top">
-                    <form class="ask_form form_Section join_form" method="post" action="http://www.peopleforanimalsindia.org/csr/store" id="addForm">
-                        <input type="hidden" name="_token" value="8ja9neAo77Q95nf5cMtNeoJbZMdyRPgmspmMjInl">                        <h5 class="text-white">Your information</h5>
+                    <form class="ask_form form_Section join_form" method="post" action="/api/submit-form" id="addForm">
+      <!-- Spam trap. Hidden from people, filled in by bots. Leave it here. -->
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <input type="hidden" name="form_type" value="csr">
+      <h5 class="text-white">Your information</h5>
                       <div class="form-group row m-0">
                         <div class="col-5 col-lg-4 col-md-4 plr-4">
                             <select class="form-select" name="prefix">

@@ -12,6 +12,7 @@
  */
 
 const crypto = require('crypto');
+const { recordDonation } = require('./_record-donation.js');
 
 const IV = Buffer.from([
   0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
@@ -138,14 +139,28 @@ module.exports = async function handler(request, response) {
     const donorAddress = [data.billing_address, data.billing_city, data.billing_state, data.billing_zip]
       .map((v) => clean(v, 60)).filter(Boolean).join(', ');
 
-    /* No database here, so these logs are PFA's only internal record. Match
-       them against the CCAvenue dashboard when reconciling, and export them
-       before Vercel's retention window closes. */
     console.info('PFA donation result', {
       orderId, status, amount, trackingId, bankRef,
       pan: pan || 'none',
       donorName, donorEmail, donorTel, donorAddress
     });
+
+    /* Save it. The donor has already paid by this point, so a database problem
+       must never change what they see -- recordDonation swallows its own
+       errors and we only log the outcome. Reconcile anything logged as failed
+       against the CCAvenue dashboard. */
+    try {
+      const saved = await recordDonation(data);
+      if (saved.ok) {
+        console.info('PFA donation saved to Firestore', { orderId, as: saved.recorded });
+      } else {
+        console.error('PFA donation NOT saved to Firestore', { orderId, status, amount, error: saved.error });
+      }
+    } catch (saveError) {
+      console.error('PFA donation save threw unexpectedly', {
+        orderId, error: String((saveError && saveError.message) || saveError)
+      });
+    }
 
     const rows = [
       ['Reference number', orderId],

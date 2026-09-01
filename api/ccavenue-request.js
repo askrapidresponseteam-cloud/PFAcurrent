@@ -156,6 +156,23 @@ module.exports = async function handler(request, response) {
     const tel = clean(body.billing_tel, 20).replace(/[^\d+]/g, '');
     const pan = clean(body.pan, 12).toUpperCase();
 
+    /* The donate form already posts a "type" field, and the other pages can
+       post one too. Carrying it through means a membership payment is recorded
+       as Membership rather than lumped in with general donations. Validated
+       against a fixed list so nothing arbitrary reaches the payment gateway. */
+    const PURPOSES = new Set([
+      'donate', 'donate-by-inr', 'donate-by-usd', 'cheque', 'donate-by-cheque-dd',
+      'membership', 'join-now', 'adopt', 'sponsor', 'sponsor-an-animal',
+      'campaign', 'gift', 'make-a-gift', 'csr', 'feeder-care',
+      'pfa-feeder-care-assistance', 'legacy', 'leave-a-legacy'
+    ]);
+    /* Existing pages carry human-readable values like type="Join Now" and
+       type="make a Gift", so normalise before matching rather than making
+       every page change its markup. */
+    const requested = clean(body.purpose || body.type, 40)
+      .toLowerCase().replace(/[\s/]+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const purpose = PURPOSES.has(requested) ? requested : 'donate';
+
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Please enter a valid email address.');
     if (pan && !/^[A-Z]{5}\d{4}[A-Z]$/.test(pan)) throw new Error('That PAN number does not look valid. Leave it blank if unsure.');
 
@@ -179,7 +196,7 @@ module.exports = async function handler(request, response) {
       billing_email: email,
       merchant_param1: pan,
       merchant_param2: 'PFA Donation',
-      merchant_param3: 'donate',
+      merchant_param3: purpose,
       merchant_param4: 'PFA Website'
     };
 
@@ -196,7 +213,7 @@ module.exports = async function handler(request, response) {
     /* Log enough to reconcile against CCAvenue's dashboard later. There is no
        database here, so Vercel's function logs are the only record PFA keeps
        of what was sent. Export them if you need an audit trail. */
-    console.info('PFA donation started', { orderId, amount, pan: pan ? 'provided' : 'none' });
+    console.info('PFA donation started', { orderId, amount, purpose, pan: pan ? 'provided' : 'none' });
 
     const nonce = crypto.randomBytes(18).toString('base64');
     response.statusCode = 200;

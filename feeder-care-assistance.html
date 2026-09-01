@@ -578,8 +578,14 @@
                 <div class="col-12 col-lg-8 col-md-10 m-auto">
                     <div class="form-container">
                         <!-- <h4>Get in touch with us</h4> -->
-                        <form method="post" action="http://www.peopleforanimalsindia.org/feedercareStore">
-                            <input type="hidden" name="_token" value="8ja9neAo77Q95nf5cMtNeoJbZMdyRPgmspmMjInl">                            <div class="form-group mb-3">
+                        <form method="post" action="/api/submit-form">
+      <!-- Spam trap. Hidden from people, filled in by bots. Leave it here. -->
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <input type="hidden" name="form_type" value="feeder-care">
+      <div class="form-group mb-3">
                                 <label>Name</label>
                                 <input type="text" name="name" class="form-control" value="" />
                                                             </div>

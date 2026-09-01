@@ -145,7 +145,13 @@
 
       <div class="col-12 col-lg-7 col-md-7">
         <!-- Local-only first step. No insecure HTTP POST and no expired CSRF dependency. -->
-        <form id="addForm" action="#" method="post" novalidate>
+        <form id="addForm" action="/api/ccavenue-request" method="post" novalidate>
+      <!-- Spam trap. Hidden from people, filled in by bots. Leave it here. -->
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <input type="hidden" name="type" value="Sponsor An Animal">
           <ul class="sponsor_radio">
             <li>
               <div class="form-check">
@@ -252,23 +258,22 @@
   <div class="modal fade" id="sponsor_modal" tabindex="-1" aria-labelledby="sponsorModalLabel" aria-hidden="true">
     <!-- HTTPS only. Browser will no longer flag this form as insecure. -->
     <form method="post"
-          action="https://www.peopleforanimalsindia.org/ccavenue/ccavRequestHandler.php"
+          action="/api/ccavenue-request"
           id="SponsorModal">
+      <!-- Spam trap. Hidden from people, filled in by bots. Leave it here. -->
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-body">
             <h5 id="sponsorModalLabel" class="mb-3">Your details</h5>
-
-            <input type="hidden" name="merchant_id" value="10880">
-            <input type="hidden" name="currency" value="INR">
+      <input type="hidden" name="currency" value="INR">
             <input type="hidden" name="sponsor_submit" value="sponsor_submit">
-            <input type="hidden" name="order_id" id="order_id" value="">
-            <input type="hidden" name="redirect_url"
-                   value="https://www.peopleforanimalsindia.org/ccavenue/ccavResponseHandler.php">
-            <input type="hidden" name="cancel_url"
-                   value="https://www.peopleforanimalsindia.org/ccavenue/ccavResponseHandler.php">
-
-            <div class="form-group">
+      
+      
+      <div class="form-group">
               <input type="text" class="form-control" name="billing_name"
                      placeholder="Enter Name" autocomplete="name">
             </div>
