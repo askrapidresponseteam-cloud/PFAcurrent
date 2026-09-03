@@ -50,7 +50,7 @@
 								<a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">PFA STORE</a>
 								<div class="dropdown-menu single" role="menu">
 									<ul class="list-unstyled">
-										<li><a href="http://www.peopleforanimalsindia.org/product">Show All</a></li>
+										<li><a href="https://www.peopleforanimalsindia.org/product">Show All</a></li>
 																																								<li><a href="#">PFA MERCHANDISE</a></li>
 																													</ul>
 								</div>
@@ -99,7 +99,7 @@
                                                     <!--<li><a href="celebs">Celebrities at PFA</a></li>-->
                                                     <li><a href="magazine.html">PFA Magazine</a></li>
                                                     <li><a href="adopt.html">Don't Shop, Come Adopt</a></li>
-                                                    <!--<li><a href="http://www.peopleforanimalsindia.org/product">Shop</a></li>-->
+                                                    <!--<li><a href="https://www.peopleforanimalsindia.org/product">Shop</a></li>-->
 												</ul>
 											</div>  <!-- col-megamenu.// -->
 										</div>
@@ -152,11 +152,16 @@
 <!--end_innerBanner-->
 
 <section class="py-4 py-lg-5 mb-10">
-    <div class="container">
+    <div class="container" id="pfa-cart">
         <div class="row">
             <div class="col-12 col-lg-9 pe-lg-3 pe-md-3">
-                <div class="table-responsive">
-                    <table class="table table-sm cart_table table-bordered">
+                <div data-cart-empty style="display:none;padding:48px 0;text-align:center">
+                    <h4>Your cart is empty</h4>
+                    <p class="text-muted">Every tee funds the rescue and care of injured animals.</p>
+                    <a href="product.html" class="btn cart_btn w-auto">Browse the collection</a>
+                </div>
+                <div class="table-responsive" data-cart-table>
+                    <table class="table table-sm cart_table table-bordered align-middle">
                         <thead>
                             <tr>
                                 <th scope="col">Image</th>
@@ -167,13 +172,11 @@
                                 <th scope="col">Remove</th>
                             </tr>
                         </thead>
-                        <tbody>
-                                                                                                                </tbody>
+                        <tbody data-cart-body></tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="6" class="text-end">
                                     <a href="product.html" class="btn cart_btn mb-2 mt-2 w-auto">Continue Shopping</a>
-                                    <a href="cart.html" class="btn buy_btn mb-2 mt-2 w-auto">Update Shopping Cart</a>
                                 </td>
                             </tr>
                         </tfoot>
@@ -184,24 +187,23 @@
                 <div class="card">
                     <h1>Cart Totals</h1>
                     <table class="table">
-                        <tr>
-                            <td>Sub Total</td>
-                            <td>₹0</td>
-                        </tr>
-                        <tr>
-                            <td>Shipping</td>
-                            <td>₹150</td>
-                        </tr>
-                        <tr>
-                            <th>Sub Total</th>
-                            <th>₹150</th>
-                        </tr>
+                        <tr><td>Sub Total</td><td data-cart-subtotal>₹0</td></tr>
+                        <tr><td>Shipping</td><td data-cart-shipping>₹0</td></tr>
+                        <tr><th>Total</th><th data-cart-total>₹0</th></tr>
                     </table>
-                    <div class="py-3">
-                        <form action="http://www.peopleforanimalsindia.org/cart/checkout" method="GET">
-                        <button class="btn cart_btn m-0 w-auto d-block">Proceed To
-                            Checkout</button>
-                    </div>
+                    <form id="pfa-checkout-form" method="POST" action="/api/store-checkout" class="py-3">
+                        <h6 class="mb-2">Delivery details</h6>
+                        <input class="form-control form-control-sm mb-2" name="billing_name" placeholder="Full name" required maxlength="100">
+                        <input class="form-control form-control-sm mb-2" name="billing_email" type="email" placeholder="Email" required maxlength="100">
+                        <input class="form-control form-control-sm mb-2" name="billing_tel" type="tel" placeholder="10-digit phone" required pattern="(\+91)?[0-9]{10}">
+                        <textarea class="form-control form-control-sm mb-2" name="delivery_address" placeholder="Address" required maxlength="150" rows="2"></textarea>
+                        <input class="form-control form-control-sm mb-2" name="delivery_city" placeholder="City" required maxlength="50">
+                        <input class="form-control form-control-sm mb-2" name="delivery_state" placeholder="State" maxlength="50">
+                        <input class="form-control form-control-sm mb-3" name="delivery_zip" placeholder="6-digit PIN" required pattern="[0-9]{6}">
+                        <button type="submit" data-cart-checkout class="btn cart_btn m-0 w-auto d-block">Proceed To Checkout</button>
+                    </form>
+                    <p class="small text-muted px-1">Prefer to order by phone?
+                        <a href="tel:+919953313319">+91 99533 13319</a></p>
                 </div>
             </div>
         </div>
@@ -239,7 +241,7 @@
 								<li><a href="sponsor.html">Sponsor</a></li>
 								<li><a href="adopt.html">Adopt</a></li>
 								<li><a href="join-now.html">Join PFA</a></li>
-								<!--<li><a href="http://www.peopleforanimalsindia.org/product">PFA Store</a></li>-->
+								<!--<li><a href="https://www.peopleforanimalsindia.org/product">PFA Store</a></li>-->
 								<li><a href="product.html">PFA Store</a></li>
 							</ul>
 						</div>
@@ -300,7 +302,7 @@
 		<script type="text/javascript" src="front/js/turn.js"></script>
 		<script type="text/javascript" src="front/js/swiper-bundle.min.js"></script>
 		<script type="text/javascript" src="front/js/aos.js"></script>
-		<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.js"></script>
 		<script type="text/javascript" src="front/js/custom.js"></script>
 		<script src="https://www.google.com/recaptcha/api.js"></script>
@@ -344,5 +346,8 @@
 		});
 	});
 </script>
-    </body>
+    <script src="front/js/pfa-validate.js"></script>
+<script src="front/js/pfa-forms.js"></script>
+		<script src="front/js/cart.js"></script>
+</body>
 </html>

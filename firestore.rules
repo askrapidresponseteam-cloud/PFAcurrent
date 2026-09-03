@@ -1,0 +1,57 @@
+rules_version = '2';
+
+/* PFA Firestore rules — pfa-oldsite
+ *
+ * Two very different callers touch this database:
+ *
+ *   1. The Vercel functions (api/_firestore.js) authenticate with a SERVICE
+ *      ACCOUNT. Service accounts are authorised by IAM and bypass these rules
+ *      completely. Nothing below can break donations, store checkout, form
+ *      submissions or rate limiting.
+ *
+ *   2. The admin dashboard signs in as a real Firebase Auth user, and IS
+ *      subject to these rules. Everything here exists for that caller.
+ *
+ * So the safe default is: deny clients everything, then grant the dashboard
+ * the reads it needs. Writes stay server-side.
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* exists() runs server-side and is not itself governed by these rules,
+       so there is no circular dependency with the /admins block below. */
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    /* ---- donor and payment data: admin read, never client write ---------- */
+    match /payments/{doc}        { allow read: if isAdmin(); allow write: if false; }
+    match /paymentAttempts/{doc} { allow read: if isAdmin(); allow write: if false; }
+    match /people/{doc}          { allow read: if isAdmin(); allow write: if false; }
+    match /submissions/{doc}     { allow read: if isAdmin(); allow write: if false; }
+    match /aggregates/{doc}      { allow read: if isAdmin(); allow write: if false; }
+    match /bundles/{doc}         { allow read: if isAdmin(); allow write: if false; }
+
+    /* ---- store ----------------------------------------------------------- */
+    match /orders/{doc}          { allow read: if isAdmin(); allow write: if false; }
+    match /stock/{doc}           { allow read: if isAdmin(); allow write: if false; }
+
+    /* ---- the allowlist itself -------------------------------------------
+       This is the one that matters. If a signed-in user can write here they
+       add their own uid and read every donor record above. Granting admin is
+       a console or service-account action, never a client one. */
+    match /admins/{uid} {
+      allow read:  if isAdmin();
+      allow write: if false;
+    }
+
+    /* ---- abuse counters: server only, never exposed ---------------------- */
+    match /rateLimits/{doc} { allow read, write: if false; }
+
+    /* ---- anything not named above ---------------------------------------- */
+    match /{document=**} { allow read, write: if false; }
+  }
+}

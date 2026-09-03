@@ -13,6 +13,7 @@
 
 const crypto = require('crypto');
 const { recordDonation } = require('./_record-donation.js');
+const { recordOrder } = require('./_record-order.js');
 
 const IV = Buffer.from([
   0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
@@ -149,15 +150,22 @@ module.exports = async function handler(request, response) {
        must never change what they see -- recordDonation swallows its own
        errors and we only log the outcome. Reconcile anything logged as failed
        against the CCAvenue dashboard. */
+    /* A store purchase is not a donation. It must not reach recordDonation:
+       that writes to payments/, increments the donation aggregates and feeds
+       the 80G receipt and Form 10BD process. Issuing a tax receipt for a
+       t-shirt sale would be a false claim, so the two paths stay separate. */
+    const isStoreOrder = clean(data.merchant_param3, 40) === 'store-order';
+
     try {
-      const saved = await recordDonation(data);
+      const saved = isStoreOrder ? await recordOrder(data) : await recordDonation(data);
+      const kind = isStoreOrder ? 'order' : 'donation';
       if (saved.ok) {
-        console.info('PFA donation saved to Firestore', { orderId, as: saved.recorded });
+        console.info(`PFA ${kind} saved to Firestore`, { orderId, as: saved.recorded });
       } else {
-        console.error('PFA donation NOT saved to Firestore', { orderId, status, amount, error: saved.error });
+        console.error(`PFA ${kind} NOT saved to Firestore`, { orderId, status, amount, error: saved.error });
       }
     } catch (saveError) {
-      console.error('PFA donation save threw unexpectedly', {
+      console.error('PFA payment save threw unexpectedly', {
         orderId, error: String((saveError && saveError.message) || saveError)
       });
     }
@@ -174,6 +182,13 @@ module.exports = async function handler(request, response) {
     ];
 
     if (status === 'Success') {
+      if (isStoreOrder) {
+        return page(response, 200, 'success', 'Order confirmed',
+          'Thank you. Your payment went through and your order is being packed. '
+          + 'You will receive dispatch details by email. Please keep the reference '
+          + 'number below. This is a purchase, so no 80G tax receipt is issued.',
+          rows);
+      }
       return page(response, 200, 'success', 'Thank you for your donation',
         'Your payment went through. People for Animals will email your 80G receipt to the address you gave. Please keep the reference number below.',
         rows);
