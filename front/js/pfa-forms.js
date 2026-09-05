@@ -68,7 +68,8 @@
   function checkField(el) {
     var rule = ruleFor(el);
     if (!rule) return true;
-    if (el.type === "hidden" || el.disabled) return true;
+    if (el.type === "hidden" || el.type === "radio" || el.type === "checkbox" || el.disabled) return true;
+    if (el.offsetParent === null && el.type !== "hidden") return true;
     // a field that is present but empty and not required is fine
     var msg = rule.check(el.value, {
       required: isRequired(el, rule),
